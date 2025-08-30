@@ -13,7 +13,7 @@
                         "layout": "0,0,3,3",
                         "icon": "web-asset",
                         "label": "Panel",
-                        "action": "panel:http://lg.getstv.ru/msx/msx.json"
+                        "action": "link:http://getstv.com/app/"
                      }
                   ]
                }
