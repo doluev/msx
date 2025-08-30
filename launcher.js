@@ -1,9 +1,9 @@
 // main.js - Лаунчер для MSX Player с поддержкой старых браузеров
 
-// Полифилы для старых браузеров (Promise, Fetch, JSON)
+// Полифилы для старых браузеров (Promise, JSON, Array.prototype.map)
 if (!window.JSON) {
     window.JSON = {
-        parse: function(s) { eval('(' + s + ')'); },
+        parse: function(s) { return eval('(' + s + ')'); },
         stringify: function(v) { return String(v); }
     };
 }
@@ -26,26 +26,13 @@ if (!window.Promise) {
     })();
 }
 
-if (!window.fetch) {
-    window.fetch = function(url) {
-        return new Promise(function(resolve, reject) {
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', url, true);
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4) {
-                    if (xhr.status >= 200 && xhr.status < 300) {
-                        resolve({
-                            json: function() { return JSON.parse(xhr.responseText); },
-                            status: xhr.status
-                        });
-                    } else {
-                        reject(new Error('Fetch error: ' + xhr.status));
-                    }
-                }
-            };
-            xhr.onerror = function() { reject(new Error('Network error')); };
-            xhr.send();
-        });
+if (!Array.prototype.map) {
+    Array.prototype.map = function(callback) {
+        var result = [];
+        for (var i = 0; i < this.length; i++) {
+            result.push(callback(this[i], i, this));
+        }
+        return result;
     };
 }
 
@@ -61,7 +48,7 @@ function log(message) {
 
 // Конфигурация с заглушками
 var CONFIG = {
-    MSX_API: 'http://msx.benzac.de/', // Для интеграции с MSX
+    MSX_API: 'http://msx.benzac.de/',
     CONTENT: '' // Заглушка для контента
 };
 
@@ -100,27 +87,58 @@ function generateLauncherJSON() {
 }
 
 // Отправка JSON в MSX через postMessage
-function sendToMSX(json) {
+function sendToMSX(json, isInit) {
     if (!window.parent) {
         log('Ошибка: window.parent недоступен');
         return;
     }
     try {
-        window.parent.postMessage({
+        var message = {
             type: 'interaction',
+            sender: 'plugin',
+            target: 'app',
             data: { json: JSON.stringify(json) }
-        }, '*');
-        log('JSON отправлен в MSX');
+        };
+        window.parent.postMessage(message, '*');
+        log('JSON отправлен в MSX: ' + JSON.stringify(message));
     } catch (e) {
         log('Ошибка postMessage: ' + e.message);
+    }
+}
+
+// Обработка сообщений от MSX
+function handleMSXMessage(event) {
+    log('Получено сообщение от MSX: ' + JSON.stringify(event.data));
+    if (event.data && event.data.type === 'interaction' && event.data.init === 1) {
+        log('Обработка init:1 сообщения');
+        var json = generateLauncherJSON();
+        sendToMSX(json, true);
+    } else if (event.data && event.data.type === 'interaction' && event.data.data) {
+        log('Получены данные: ' + JSON.stringify(event.data.data));
+        // Здесь можно обработать другие события от MSX, если нужно
+    } else {
+        log('Неизвестное сообщение от MSX');
     }
 }
 
 // Инициализация лаунчера
 function initLauncher() {
     log('Инициализация лаунчера...');
-    var json = generateLauncherJSON();
-    sendToMSX(json);
+    // Отправляем начальное сообщение interaction:init
+    if (window.parent) {
+        try {
+            window.parent.postMessage({
+                type: 'interaction',
+                sender: 'plugin',
+                target: 'app',
+                data: { event: 'interaction:init' }
+            }, '*');
+            log('Отправлено interaction:init');
+        } catch (e) {
+            log('Ошибка отправки interaction:init: ' + e.message);
+        }
+    }
+    // Ждём сообщения от MSX
 }
 
 // Запуск
@@ -129,16 +147,11 @@ if (document.addEventListener) {
         log('DOMContentLoaded сработал');
         initLauncher();
     });
+    window.addEventListener('message', handleMSXMessage, false);
 } else {
     window.onload = function() {
         log('window.onload сработал');
         initLauncher();
     };
-}
-
-// Обработка сообщений от MSX (для отладки)
-if (window.addEventListener) {
-    window.addEventListener('message', function(event) {
-        log('Получено сообщение от MSX: ' + JSON.stringify(event.data));
-    }, false);
+    window.onmessage = handleMSXMessage;
 }
