@@ -13,7 +13,7 @@
                         "layout": "0,0,3,3",
                         "icon": "web-asset",
                         "label": "Panel",
-                        "action": "panel:http://msx.benzac.de/info/data/guide/panel.json"
+                        "action": "panel:http://lg.getstv.ru/msx/msx.json"
                      }
                   ]
                }
