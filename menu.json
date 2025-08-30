@@ -1,13 +1,3 @@
 {
-   "type": "list",
    "headline": "WALS_MSX 2.5",
-   "items": [ {
-         "image": "https://wals09.github.io/msx/logon/atodo.png",
-         "action": "menu:request:interaction:menu@http://atodo.fun/fun.html"
-      },
-      {
-         "image": "https://wals09.github.io/msx/logon/getstv.png",
-         "action": "panel:http://lg.getstv.ru/msx/msx.json"
-      }
-   ]
 }
