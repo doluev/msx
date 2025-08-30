@@ -51,14 +51,14 @@ function isFullStr(str) {
     return typeof str === 'string' && str.length > 0;
 }
 
-// Конфигурация с заглушками
+// Конфигурация
 var CONFIG = {
     MSX_API: 'http://msx.benzac.de/',
-    DICTIONARY: 'placeholder://dictionary.json',
-    LOGO: 'placeholder://logo.png'
+    DICTIONARY: 'https://wals09.github.io/msx/dictionary.json',
+    LOGO: 'https://doluev.github.io/msx/logo_color.png'
 };
 
-// JSON-меню, основанное на вашем примере
+// JSON-меню с реальными URL
 function generateLauncherJSON() {
     log('Генерация JSON для MSX...');
     return {
@@ -71,39 +71,39 @@ function generateLauncherJSON() {
             {
                 icon: 'menu',
                 label: 'Все приложения',
-                data: 'placeholder://all.json'
+                data: 'https://wals09.github.io/msx/mooviestile/all.json'
             },
             {
                 icon: 'live-tv',
                 label: 'IPTV приложения',
-                data: 'placeholder://iptv.json'
+                data: 'https://wals09.github.io/msx/mooviestile/iptv.json'
             },
             {
                 icon: 'movie',
                 label: 'Бесплатное кино',
-                data: 'placeholder://free_kino.json'
+                data: 'https://wals09.github.io/msx/mooviestile/free_kino.json'
             },
             {
                 icon: 'movie-filter',
                 label: 'Всё кино',
-                data: 'placeholder://full_kino.json'
+                data: 'https://wals09.github.io/msx/mooviestile/full_kino.json'
             },
             {
                 icon: 'devices-other',
                 label: 'Другие медиаплатформы',
-                data: 'placeholder://social.json'
+                data: 'https://wals09.github.io/msx/mooviestile/social.json'
             },
             { type: 'separator' },
             {
                 icon: 'dvr',
                 label: 'Альтернативные стартовые параметры',
-                data: 'placeholder://store.json'
+                data: 'https://wals09.github.io/msx/mooviestile/store.json'
             },
             { type: 'separator' },
             {
                 icon: 'wallpaper',
                 label: 'Тема',
-                data: 'placeholder://panel_tems.json'
+                data: 'https://wals09.github.io/msx/tema/panel_tems.json'
             },
             { type: 'separator' },
             {
@@ -116,16 +116,16 @@ function generateLauncherJSON() {
                                 {
                                     type: 'button',
                                     layout: '0,0,3,3',
-                                    icon: 'placeholder://atodo.png',
+                                    icon: 'https://wals09.github.io/msx/logon/atodo.png',
                                     label: 'Atodo',
-                                    action: 'execute:plugin:back'
+                                    action: 'menu:request:interaction:menu@http://atodo.fun/fun.html'
                                 },
                                 {
                                     type: 'button',
                                     layout: '3,0,3,3',
-                                    icon: 'placeholder://atodo.png',
+                                    icon: 'https://wals09.github.io/msx/logon/atodo.png',
                                     label: 'Atodo',
-                                    action: 'execute:plugin:back'
+                                    action: 'link:http://atodo.fun'
                                 }
                             ]
                         }
@@ -145,12 +145,11 @@ function sendToMSX(json, eventType) {
         return;
     }
     try {
-        // Отправляем как объект, а не строку
         var message = {
             type: 'interactionPlugin',
             sender: 'plugin',
             target: 'app',
-            data: { menu: json } // Изменено с json на menu
+            data: { menu: json }
         };
         setTimeout(function() {
             window.parent.postMessage(message, '*');
@@ -174,7 +173,7 @@ function respondToRequest(requestId, data) {
             target: 'app',
             data: {
                 requestId: requestId,
-                response: data
+                response: data || { status: 'ok' }
             }
         };
         window.parent.postMessage(message, '*');
@@ -206,7 +205,14 @@ function handleMSXMessage(event) {
         } else if (event.data.data && (isFullStr(event.data.data.requestId) || isFullStr(event.data.data.dataId))) {
             log('Обработка requestId/dataId: ' + JSON.stringify(event.data.data));
             if (isFullStr(event.data.data.requestId)) {
-                respondToRequest(event.data.data.requestId, { status: 'ok', data: generateLauncherJSON() });
+                var responseData = { status: 'ok' };
+                if (event.data.data.requestId.includes('menu')) {
+                    responseData = generateLauncherJSON();
+                }
+                respondToRequest(event.data.data.requestId, responseData);
+            }
+            if (isFullStr(event.data.data.dataId)) {
+                respondToRequest(event.data.data.dataId, { status: 'ok' });
             }
         } else {
             log('Неизвестное сообщение от MSX');
