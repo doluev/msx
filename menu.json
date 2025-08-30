@@ -113,8 +113,8 @@
                      {
                         "type": "button",
                         "layout": "0,0,3,3",
-                        "icon": "web-asset",
-                        "label": "Panel",
+                        "icon": "https://wals09.github.io/msx/logon/atodo.png",
+                        "label": "Atodo",
                         "action": "menu:request:interaction:menu@http://atodo.fun/fun.html"
                      }
                   ]
