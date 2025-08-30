@@ -35,7 +35,7 @@
             "color": "msx-glass",
             "imageFiller": "cover"
          },
-   "menu": [
+   "list": [
                      {
                         "selection": {
                               "important": true,
