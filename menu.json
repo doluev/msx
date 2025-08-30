@@ -4,23 +4,6 @@
    "underlay": {
    "items": [
       {
-         "color": "transparent",
-         "image": "https://wals09.github.io/msx/logon/tema.png",
-         "selection": {
-            "important": true,
-            "action": "update:content:underlay:text",
-            "data": {
-               "headline": "Тема оформления",
-               "text": "Выбор темы оформления WALS_MSX"
-            }
-         },
-         "action": "panel:https://wals09.github.io/msx/tema/panel_tems.json",
-         "properties": {
-            "trigger:back": "player:stop",
-            "image:extension": "| {col:msx-white}26th Item"
-         }
-      },
-      {
          "selection": {
             "important": true,
             "action": "update:content:underlay:text",
