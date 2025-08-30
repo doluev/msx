@@ -6,31 +6,31 @@
    "preload": "next",
    "captionUnderlay": 1,
    "underlay": {
-            "items": [
-               {
-                  "type": "space",
-                  "round": false,
-                  "layout": "0,3,12,3",
-                  "offset": "-1.25,-0.6,2,1.17",
-                  "color": "msx-black-soft"
-               },
-               {
-                  "type": "space",
-                  "round": false,
-                  "layout": "0,0,12,1",
-                  "offset": "-1,0,2,-0.8",
-                  "color": "red"
-               },
-               {
-                  "id": "text",
-                  "type": "space",
-                  "layout": "1,0,6,3",
-                  "offset": "-1,0.5,1,0",
-                  "headline": "",
-                  "text": ""
-               }
-            ]
+      "items": [
+         {
+            "type": "space",
+            "round": false,
+            "layout": "0,3,12,3",
+            "offset": "-1.25,-0.6,2,1.17",
+            "color": "msx-black-soft"
          },
+         {
+            "type": "space",
+            "round": false,
+            "layout": "0,0,12,1",
+            "offset": "-1,0,2,-0.8",
+            "color": "red"
+         },
+         {
+            "id": "text",
+            "type": "space",
+            "layout": "1,0,6,3",
+            "offset": "-1,0.5,1,0",
+            "headline": "",
+            "text": ""
+         }
+      ]
+   },
    "template": {
             "type": "default",
             "layout": "0,0,1,1",
@@ -40,7 +40,7 @@
             "color": "msx-glass",
             "imageFiller": "cover"
          },
-   "list": [
+   "items": [
                      {
                         "selection": {
                               "important": true,
