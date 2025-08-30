@@ -46,6 +46,11 @@ function log(message) {
     }
 }
 
+// Проверка строк (аналог isFullStr из исходного main.js)
+function isFullStr(str) {
+    return typeof str === 'string' && str.length > 0;
+}
+
 // Конфигурация с заглушками
 var CONFIG = {
     MSX_API: 'http://msx.benzac.de/',
@@ -71,7 +76,7 @@ var placeholderMenu = [
     {
         type: 'item',
         label: 'Выход',
-        action: 'back'
+        action: 'execute:plugin:back'
     }
 ];
 
@@ -87,20 +92,20 @@ function generateLauncherJSON() {
 }
 
 // Отправка JSON в MSX через postMessage
-function sendToMSX(json, isInit) {
+function sendToMSX(json, eventType) {
     if (!window.parent) {
         log('Ошибка: window.parent недоступен');
         return;
     }
     try {
         var message = {
-            type: 'interaction',
+            type: 'interactionPlugin',
             sender: 'plugin',
             target: 'app',
             data: { json: JSON.stringify(json) }
         };
         window.parent.postMessage(message, '*');
-        log('JSON отправлен в MSX: ' + JSON.stringify(message));
+        log('JSON отправлен в MSX для ' + eventType + ': ' + JSON.stringify(message));
     } catch (e) {
         log('Ошибка postMessage: ' + e.message);
     }
@@ -109,15 +114,31 @@ function sendToMSX(json, isInit) {
 // Обработка сообщений от MSX
 function handleMSXMessage(event) {
     log('Получено сообщение от MSX: ' + JSON.stringify(event.data));
-    if (event.data && event.data.type === 'interaction' && event.data.init === 1) {
-        log('Обработка init:1 сообщения');
-        var json = generateLauncherJSON();
-        sendToMSX(json, true);
-    } else if (event.data && event.data.type === 'interaction' && event.data.data) {
-        log('Получены данные: ' + JSON.stringify(event.data.data));
-        // Здесь можно обработать другие события от MSX, если нужно
+    if (event.data && event.data.type === 'interactionPlugin') {
+        if (event.data.init === 1) {
+            log('Обработка init:1 сообщения');
+            var json = generateLauncherJSON();
+            sendToMSX(json, 'init:1');
+        } else if (event.data.data && isFullStr(event.data.data.event)) {
+            log('Обработка события: ' + event.data.data.event);
+            if (event.data.data.event === 'app:resize') {
+                log('Обработка app:resize');
+                var json = generateLauncherJSON();
+                sendToMSX(json, 'app:resize');
+            } else {
+                log('Неизвестное событие: ' + event.data.data.event);
+            }
+        } else if (event.data.data && (isFullStr(event.data.data.requestId) || isFullStr(event.data.data.dataId))) {
+            log('Обработка данных requestId/dataId: ' + JSON.stringify(event.data.data));
+            // Можно добавить обработку, если нужно
+        } else {
+            log('Неизвестное сообщение от MSX');
+            // На всякий случай отправляем меню
+            var json = generateLauncherJSON();
+            sendToMSX(json, 'unknown');
+        }
     } else {
-        log('Неизвестное сообщение от MSX');
+        log('Игнорируем сообщение с типом: ' + (event.data ? event.data.type : 'undefined'));
     }
 }
 
@@ -128,7 +149,7 @@ function initLauncher() {
     if (window.parent) {
         try {
             window.parent.postMessage({
-                type: 'interaction',
+                type: 'interactionPlugin',
                 sender: 'plugin',
                 target: 'app',
                 data: { event: 'interaction:init' }
@@ -138,7 +159,6 @@ function initLauncher() {
             log('Ошибка отправки interaction:init: ' + e.message);
         }
     }
-    // Ждём сообщения от MSX
 }
 
 // Запуск
