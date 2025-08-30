@@ -123,6 +123,13 @@
                         "icon": "https://wals09.github.io/msx/logon/atodo.png",
                         "label": "Atodo",
                         "action": "link:http://atodo.fun"
+                     },
+                     {
+                        "type": "button",
+                        "layout": "3,0,3,3",
+                        "icon": "https://wals09.github.io/msx/logon/atodo.png",
+                        "label": "Atodo",
+                        "action": "page:request:interaction:search@http://atodo.fun/fun.html"
                      }
                   ]
                }
