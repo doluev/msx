@@ -2,7 +2,9 @@
    "headline": "Test Menu",
    "menu": [
       {
-         "label": "Default Menu Item"
+         "label": "Default Menu Item",
+         "action": "panel:http://lg.getstv.ru/msx/msx.json"
+
       },
       {
          "type": "separator"
