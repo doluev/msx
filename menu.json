@@ -35,12 +35,6 @@
             "color": "msx-glass",
             "imageFiller": "cover"
          },
-        {
-         "label": "Panel",
-         "data": {
-            "type": "pages",
-            "pages": [
-               {
    "menu": [
                      {
                         "selection": {
@@ -69,10 +63,7 @@
                         "action": "menu:request:interaction:menu@http://atodo.fun/fun.html"
                      }
                   ]
-               }
-            ]
-         }
-      }
+}
       
    ]
 }
