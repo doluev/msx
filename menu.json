@@ -53,6 +53,40 @@
              },
                      "image": "https://wals09.github.io/msx/logon/getstv.png",
                      "action": "link:http://getstv.com/app/"
+         },
+            {
+
+         "offset": "0,2.5,11,0",
+
+         "color": "msx-black-soft",
+
+         "label": "{ico:msx-white:shop-2} Альтернативные магазины лаунчеры {ico:msx-white:shop-2}",
+
+         "selection": {
+
+            "important": true,
+
+            "action": "update:content:underlay:text",
+
+            "data": {
+
+               "headline": "AlterSTORE",
+
+               "text": " Альтернативные MSX магазины / лаунчеры"
+
+            }
+
+         },
+
+         "action": "panel:https://wals09.github.io/msx/alterstore/template.json",
+
+         "properties": {
+
+            "trigger:back": "player:stop"
+
          }
+
+      }
+
    ]
 }
