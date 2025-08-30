@@ -9,10 +9,14 @@
                {
                   "items": [
                      {
-                        "type": "button",
-                        "layout": "0,0,1,1",
-                        "icon": "web-asset",
-                        "label": "GetsTV",
+                        "selection": {
+                              "important": true,
+                              "action": "update:content:underlay:text",
+                              "data": {
+                              "headline": "GetsTV",
+                              "text": " Фильмы и Мультфильмы. Крупнейшая база на любой вкус, обновляется ежедневно, новинки появляются сразу после премьеры в кинотеатре."
+                              }
+                        },
                         "image": "https://wals09.github.io/msx/logon/getstv.png",
                         "action": "link:http://getstv.com/app/"
                      },
