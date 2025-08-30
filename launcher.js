@@ -61,7 +61,7 @@ var CONFIG = {
 // JSON-меню, основанное на вашем примере
 function generateLauncherJSON() {
     log('Генерация JSON для MSX...');
-    var json = {
+    return {
         extension: '{col:msx-white}{ico:msx-white:event} {now:date:D, M d, yyyy}{tb}{ico:msx-white:access-time} {now:time:hh:mm}',
         dictionary: CONFIG.DICTIONARY,
         logo: CONFIG.LOGO,
@@ -118,14 +118,14 @@ function generateLauncherJSON() {
                                     layout: '0,0,3,3',
                                     icon: 'placeholder://atodo.png',
                                     label: 'Atodo',
-                                    action: 'execute:plugin:back' // Заглушка вместо menu:request:interaction
+                                    action: 'execute:plugin:back'
                                 },
                                 {
                                     type: 'button',
                                     layout: '3,0,3,3',
                                     icon: 'placeholder://atodo.png',
                                     label: 'Atodo',
-                                    action: 'execute:plugin:back' // Заглушка вместо link
+                                    action: 'execute:plugin:back'
                                 }
                             ]
                         }
@@ -136,7 +136,6 @@ function generateLauncherJSON() {
             { type: 'settings' }
         ]
     };
-    return json;
 }
 
 // Отправка JSON в MSX
@@ -146,11 +145,12 @@ function sendToMSX(json, eventType) {
         return;
     }
     try {
+        // Отправляем как объект, а не строку
         var message = {
             type: 'interactionPlugin',
             sender: 'plugin',
             target: 'app',
-            data: { json: JSON.stringify(json) }
+            data: { menu: json } // Изменено с json на menu
         };
         setTimeout(function() {
             window.parent.postMessage(message, '*');
