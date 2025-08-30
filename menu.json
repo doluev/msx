@@ -1,9 +1,7 @@
 {
    "type": "list",
    "headline": "Template",
-   "items": [
-      {
-         "items": [
+   "items": [    
             {
                "type": "button",
                "layout": "0,0,3,3",
@@ -18,7 +16,7 @@
                "label": "Item",
                "action": "content:http://msx.benzac.de/info/data/guide/template_item.json"
             }
-         ]
-      }
    ]
 }
+   
+
