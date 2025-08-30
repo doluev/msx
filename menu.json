@@ -12,14 +12,14 @@
                         "type": "button",
                         "layout": "0,0,3,3",
                         "icon": "web-asset",
-                        "label": "Panel",
+                        "label": "GetsTV",
                         "action": "link:http://getstv.com/app/"
                      },
                      {
                         "type": "button",
                         "layout": "3,0,3,3",
                         "icon": "web-asset",
-                        "label": "Panel",
+                        "label": "Atodo",
                         "action": "link:http://atodo.fun/"
                      }
                   ]
