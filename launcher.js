@@ -138,6 +138,30 @@ function generateLauncherJSON() {
     };
 }
 
+// Ответные данные для requestId
+function getResponseData(requestId) {
+    var menu = generateLauncherJSON().menu;
+    var dataMap = {
+        'https://wals09.github.io/msx/mooviestile/all.json': { type: 'list', headline: 'Все приложения', items: [] },
+        'https://wals09.github.io/msx/mooviestile/iptv.json': { type: 'list', headline: 'IPTV приложения', items: [] },
+        'https://wals09.github.io/msx/mooviestile/free_kino.json': { type: 'list', headline: 'Бесплатное кино', items: [] },
+        'https://wals09.github.io/msx/mooviestile/full_kino.json': { type: 'list', headline: 'Всё кино', items: [] },
+        'https://wals09.github.io/msx/mooviestile/social.json': { type: 'list', headline: 'Другие медиаплатформы', items: [] },
+        'https://wals09.github.io/msx/mooviestile/store.json': { type: 'list', headline: 'Альтернативные стартовые параметры', items: [] },
+        'https://wals09.github.io/msx/tema/panel_tems.json': { type: 'list', headline: 'Тема', items: [] }
+    };
+    for (var url in dataMap) {
+        if (requestId.includes(url)) {
+            log('Найден requestId для URL: ' + url);
+            return dataMap[url];
+        }
+    }
+    if (requestId.includes('menu')) {
+        return generateLauncherJSON();
+    }
+    return { status: 'ok' };
+}
+
 // Отправка JSON в MSX
 function sendToMSX(json, eventType) {
     if (!window.parent) {
@@ -173,7 +197,7 @@ function respondToRequest(requestId, data) {
             target: 'app',
             data: {
                 requestId: requestId,
-                response: data || { status: 'ok' }
+                response: data
             }
         };
         window.parent.postMessage(message, '*');
@@ -205,10 +229,7 @@ function handleMSXMessage(event) {
         } else if (event.data.data && (isFullStr(event.data.data.requestId) || isFullStr(event.data.data.dataId))) {
             log('Обработка requestId/dataId: ' + JSON.stringify(event.data.data));
             if (isFullStr(event.data.data.requestId)) {
-                var responseData = { status: 'ok' };
-                if (event.data.data.requestId.includes('menu')) {
-                    responseData = generateLauncherJSON();
-                }
+                var responseData = getResponseData(event.data.data.requestId);
                 respondToRequest(event.data.data.requestId, responseData);
             }
             if (isFullStr(event.data.data.dataId)) {
