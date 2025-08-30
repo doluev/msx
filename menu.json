@@ -1,20 +1,24 @@
 {
    "headline": "Test Menu",
    "menu": [
-      "items": 
-            {
-               "type": "button",
-               "layout": "0,0,3,3",
-               "icon": "web-asset",
-               "label": "Panel",
-               "action": "panel:http://lg.getstv.ru/msx/msx.json"
-            },
       {
-         "type": "separator"
-      },
-      {
-         "icon": "home",
-         "label": "Menu Item With Icon"
+         "label": "Panel",
+         "data": {
+            "type": "pages",
+            "pages": [
+               {
+                  "items": [
+                     {
+                        "type": "button",
+                        "layout": "0,0,3,3",
+                        "icon": "web-asset",
+                        "label": "Panel",
+                        "action": "panel:http://msx.benzac.de/info/data/guide/panel.json"
+                     }
+                  ]
+               }
+            ]
+         }
       }
       
    ]
