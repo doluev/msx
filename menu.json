@@ -1,92 +1,124 @@
 {
-   "type": "list",
-   "headline": "Test Menu",
+
    "extension": "{col:msx-white}{ico:msx-white:event} {now:date:D, M d, yyyy}{tb}{ico:msx-white:access-time} {now:time:hh:mm}",
+
    "dictionary": "https://wals09.github.io/msx/dictionary.json",
-   "preload": "next",
-   "captionUnderlay": 1,
-   "underlay": {
-      "items": [
-         {
-            "type": "space",
-            "round": false,
-            "layout": "0,3,12,3",
-            "offset": "-1.25,-0.6,2,1.17",
-            "color": "msx-black-soft"
-         },
-         {
-            "type": "space",
-            "round": false,
-            "layout": "0,0,12,1",
-            "offset": "-1,0,2,-0.8",
-            "color": "red"
-         },
-         {
-            "id": "text",
-            "type": "space",
-            "layout": "1,0,6,3",
-            "offset": "-1,0.5,1,0",
-            "headline": "",
-            "text": ""
-         }
-      ]
-   },
-   "template": {
-            "type": "default",
-            "layout": "0,0,1,1",
-            "area": "0,0,12,3",
-            "offset": "0,2.5,0,0",
-            "trigger:back": "player:stop",
-            "color": "msx-glass",
-            "imageFiller": "cover"
-         },
-   "items": [
-          {
-             "selection": 
-                {
-                     "important": true,
-                     "action": "update:content:underlay:text",
-                     "data": {
-                     "headline": "GetsTV",
-                     "text": " Фильмы и Мультфильмы. Крупнейшая база на любой вкус, обновляется ежедневно, новинки появляются сразу после премьеры в кинотеатре."
-               }
-             },
-                     "image": "https://wals09.github.io/msx/logon/getstv.png",
-                     "action": "link:http://getstv.com/app/"
-         },
-            {
 
-         "offset": "0,2.5,11,0",
+   "logo": "https://wals09.github.io/msx/logo/mss.png",
 
-         "color": "msx-black-soft",
+   "headline": "",
 
-         "label": "{ico:msx-white:shop-2} Альтернативные магазины лаунчеры {ico:msx-white:shop-2}",
+   "menu": [
 
-         "selection": {
+      {
 
-            "important": true,
+         "type": "separator"
 
-            "action": "update:content:underlay:text",
+      },
 
-            "data": {
+      {
 
-               "headline": "AlterSTORE",
+         "icon": "menu",
 
-               "text": " Альтернативные MSX магазины / лаунчеры"
+         "label": "Все приложения",
 
-            }
+         "data": "https://wals09.github.io/msx/mooviestile/all.json"
 
-         },
+      },
 
-         "action": "panel:https://wals09.github.io/msx/alterstore/template.json",
+      {
 
-         "properties": {
+         "icon": "live-tv",
 
-            "trigger:back": "player:stop"
+         "label": "IPTV приложения",
 
-         }
+         "data": "https://wals09.github.io/msx/mooviestile/iptv.json"
+
+      },
+
+      {
+
+         "icon": "movie",
+
+         "label": "Бесплатное кино",
+
+         "data": "https://wals09.github.io/msx/mooviestile/free_kino.json"
+
+      },
+
+      {
+
+         "icon": "movie-filter",
+
+         "label": "Всё кино",
+
+         "data": "https://wals09.github.io/msx/mooviestile/full_kino.json"
+
+      },
+
+      {
+
+         "icon": "devices-other",
+
+         "label": "Другие медиплатформы",
+
+         "data": "https://wals09.github.io/msx/mooviestile/social.json"
+
+      },
+
+      {
+
+         "type": "separator"
+
+      },
+
+      {
+
+         "icon": "dvr",
+
+         "label": "Альтернативные стартовые параметры",
+
+         "data": "https://wals09.github.io/msx/mooviestile/store.json"
+
+      },
+
+      {
+
+         "type": "separator"
+
+      },
+
+      {
+
+         "icon": "wallpaper",
+
+         "label": "Тема",
+
+         "data": "https://wals09.github.io/msx/tema/panel_tems.json"
+
+      },
+
+      {
+
+         "type": "separator"
+
+      },
+      {
+         "label": "Pages",
+         "action": "menu:request:interaction:menu@http://atodo.fun/fun.html"
+      },
+      {
+
+         "type": "separator"
+
+      },
+
+      {
+
+         "type": "settings"
 
       }
 
    ]
+
 }
