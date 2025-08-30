@@ -6,7 +6,6 @@
       {
          "selection": {
             "important": true,
-            "action": "update:content:underlay:text",
             "data": {
                "headline": "ATODO",
                "text": "Приложение для просмотра различного медиаконтента: фильмов, сериалов, аниме, а так же просмотр торрентов"
@@ -18,7 +17,6 @@
       {
          "selection": {
             "important": true,
-            "action": "update:content:underlay:text",
             "data": {
                "headline": "GetsTV",
                "text": " Фильмы и Мультфильмы. Крупнейшая база на любой вкус, обновляется ежедневно, новинки появляются сразу после премьеры в кинотеатре."
