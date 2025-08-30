@@ -103,11 +103,24 @@
          "type": "separator"
 
       },
-      {
-         "label": "Pages",
-         "type": "button",
-         "layout": "0,0,3,3",
-         "action": "menu:request:interaction:menu@http://atodo.fun/fun.html"
+      {   
+         "label": "Atodo",
+         "data": {
+            "type": "pages",
+            "pages": [
+               {
+                  "items": [
+                     {
+                        "type": "button",
+                        "layout": "0,0,3,3",
+                        "icon": "web-asset",
+                        "label": "Panel",
+                        "action": "menu:request:interaction:menu@http://atodo.fun/fun.html"
+                     }
+                  ]
+               }
+            ]
+         }
       },
       {
 
