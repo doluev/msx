@@ -46,51 +46,100 @@ function log(message) {
     }
 }
 
-// Проверка строк (аналог isFullStr)
+// Проверка строк
 function isFullStr(str) {
     return typeof str === 'string' && str.length > 0;
 }
 
 // Конфигурация с заглушками
 var CONFIG = {
-    MSX_API: 'http://msx.benzac.de/'
+    MSX_API: 'http://msx.benzac.de/',
+    DICTIONARY: 'placeholder://dictionary.json',
+    LOGO: 'placeholder://logo.png'
 };
 
-// Минимальное меню для теста
-var placeholderMenu = [
-    {
-        type: 'item',
-        label: 'Тестовый элемент',
-        action: 'execute:plugin:back'
-    },
-    {
-        type: 'separate',
-        headline: 'Фильмы (заглушка)',
-        items: [
-            { type: 'item', label: 'Фильм 1', action: 'execute:plugin:back' },
-            { type: 'item', label: 'Фильм 2', action: 'execute:plugin:back' },
-            { type: 'item', label: 'Фильм 3', action: 'execute:plugin:back' }
-        ]
-    },
-    {
-        type: 'item',
-        label: 'Выход',
-        action: 'execute:plugin:back'
-    }
-];
-
-// Функция для генерации JSON-меню
+// JSON-меню, основанное на вашем примере
 function generateLauncherJSON() {
     log('Генерация JSON для MSX...');
     var json = {
-        type: 'menu',
-        headline: 'Мой Лаунчер',
-        items: placeholderMenu
+        extension: '{col:msx-white}{ico:msx-white:event} {now:date:D, M d, yyyy}{tb}{ico:msx-white:access-time} {now:time:hh:mm}',
+        dictionary: CONFIG.DICTIONARY,
+        logo: CONFIG.LOGO,
+        headline: '',
+        menu: [
+            { type: 'separator' },
+            {
+                icon: 'menu',
+                label: 'Все приложения',
+                data: 'placeholder://all.json'
+            },
+            {
+                icon: 'live-tv',
+                label: 'IPTV приложения',
+                data: 'placeholder://iptv.json'
+            },
+            {
+                icon: 'movie',
+                label: 'Бесплатное кино',
+                data: 'placeholder://free_kino.json'
+            },
+            {
+                icon: 'movie-filter',
+                label: 'Всё кино',
+                data: 'placeholder://full_kino.json'
+            },
+            {
+                icon: 'devices-other',
+                label: 'Другие медиаплатформы',
+                data: 'placeholder://social.json'
+            },
+            { type: 'separator' },
+            {
+                icon: 'dvr',
+                label: 'Альтернативные стартовые параметры',
+                data: 'placeholder://store.json'
+            },
+            { type: 'separator' },
+            {
+                icon: 'wallpaper',
+                label: 'Тема',
+                data: 'placeholder://panel_tems.json'
+            },
+            { type: 'separator' },
+            {
+                label: 'Atodo',
+                data: {
+                    type: 'pages',
+                    pages: [
+                        {
+                            items: [
+                                {
+                                    type: 'button',
+                                    layout: '0,0,3,3',
+                                    icon: 'placeholder://atodo.png',
+                                    label: 'Atodo',
+                                    action: 'execute:plugin:back' // Заглушка вместо menu:request:interaction
+                                },
+                                {
+                                    type: 'button',
+                                    layout: '3,0,3,3',
+                                    icon: 'placeholder://atodo.png',
+                                    label: 'Atodo',
+                                    action: 'execute:plugin:back' // Заглушка вместо link
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            { type: 'separator' },
+            { type: 'settings' }
+        ]
     };
     return json;
 }
 
-// Отправка JSON в MSX через postMessage
+// Отправка JSON в MSX
 function sendToMSX(json, eventType) {
     if (!window.parent) {
         log('Ошибка: window.parent недоступен');
@@ -103,7 +152,6 @@ function sendToMSX(json, eventType) {
             target: 'app',
             data: { json: JSON.stringify(json) }
         };
-        // Задержка 100 мс для стабильности
         setTimeout(function() {
             window.parent.postMessage(message, '*');
             log('JSON отправлен в MSX для ' + eventType + ': ' + JSON.stringify(message));
@@ -113,7 +161,7 @@ function sendToMSX(json, eventType) {
     }
 }
 
-// Ответ на запросы с requestId
+// Ответ на requestId
 function respondToRequest(requestId, data) {
     if (!isFullStr(requestId)) {
         log('Ошибка: requestId пустой');
@@ -157,9 +205,8 @@ function handleMSXMessage(event) {
             }
         } else if (event.data.data && (isFullStr(event.data.data.requestId) || isFullStr(event.data.data.dataId))) {
             log('Обработка requestId/dataId: ' + JSON.stringify(event.data.data));
-            // Отвечаем на запрос, чтобы избежать таймаута
             if (isFullStr(event.data.data.requestId)) {
-                respondToRequest(event.data.data.requestId, { status: 'ok' });
+                respondToRequest(event.data.data.requestId, { status: 'ok', data: generateLauncherJSON() });
             }
         } else {
             log('Неизвестное сообщение от MSX');
