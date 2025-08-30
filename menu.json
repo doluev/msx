@@ -1,10 +1,13 @@
 {
    "headline": "Test Menu",
    "menu": [
-      {
-         "label": "Default Menu Item",
-         "action": "panel:http://lg.getstv.ru/msx/msx.json"
-
+      { "items": [
+            {
+               "type": "button",
+               "layout": "0,0,3,3",
+               "icon": "web-asset",
+               "label": "Panel",
+               "action": "panel:http://lg.getstv.ru/msx/msx.json"
       },
       {
          "type": "separator"
