@@ -1,7 +1,6 @@
 {
    "headline": "Test Menu",
-   "menu": [
-         "underlay": {
+   "underlay": {
             "items": [
                {
                   "type": "space",
@@ -27,7 +26,7 @@
                }
             ]
          },
-         "template": {
+   "template": {
             "type": "default",
             "layout": "0,0,1,1",
             "area": "0,0,12,3",
@@ -42,7 +41,7 @@
             "type": "pages",
             "pages": [
                {
-                  "items": [
+   "menu": [
                      {
                         "selection": {
                               "important": true,
