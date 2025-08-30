@@ -1,110 +1,144 @@
-// main.js - Лаунчер для MSX Player с поддержкой старых браузеров и заглушками
+// main.js - Лаунчер для MSX Player с поддержкой старых браузеров
 
-// Полифилы для старых браузеров (Promise, Fetch)
+// Полифилы для старых браузеров (Promise, Fetch, JSON)
+if (!window.JSON) {
+    window.JSON = {
+        parse: function(s) { eval('(' + s + ')'); },
+        stringify: function(v) { return String(v); }
+    };
+}
+
 if (!window.Promise) {
-  window.Promise = (function() {
-    function Promise(resolver) {
-      this.then = function(onFulfilled) {
-        resolver(onFulfilled);
-        return this;
-      };
-    }
-    return Promise;
-  })();
+    window.Promise = (function() {
+        function Promise(resolver) {
+            var callbacks = [];
+            this.then = function(onFulfilled) {
+                callbacks.push(onFulfilled);
+                return this;
+            };
+            resolver(function(value) {
+                for (var i = 0; i < callbacks.length; i++) {
+                    callbacks[i](value);
+                }
+            });
+        }
+        return Promise;
+    })();
 }
 
 if (!window.fetch) {
-  window.fetch = function(url) {
-    return new Promise(function(resolve, reject) {
-      var xhr = new XMLHttpRequest();
-      xhr.open('GET', url);
-      xhr.onload = function() {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          resolve({ json: function() { return JSON.parse(xhr.responseText); } });
-        } else {
-          reject(new Error('Fetch error'));
-        }
-      };
-      xhr.onerror = reject;
-      xhr.send();
-    });
-  };
+    window.fetch = function(url) {
+        return new Promise(function(resolve, reject) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4) {
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        resolve({
+                            json: function() { return JSON.parse(xhr.responseText); },
+                            status: xhr.status
+                        });
+                    } else {
+                        reject(new Error('Fetch error: ' + xhr.status));
+                    }
+                }
+            };
+            xhr.onerror = function() { reject(new Error('Network error')); };
+            xhr.send();
+        });
+    };
+}
+
+// Логирование
+function log(message) {
+    if (console && console.log) {
+        console.log('[MSX Launcher] ' + message);
+    }
+    if (window.showLog) {
+        window.showLog('[MSX Launcher] ' + message);
+    }
 }
 
 // Конфигурация с заглушками
 var CONFIG = {
-  TMDB_API: '', // Заглушка: не использовать реальный API
-  IMAGE_PROXY: '', // Заглушка для изображений
-  IPTV_PLAYLIST: '', // Заглушка для плейлиста
-  MSX_API: 'http://msx.benzac.de/' // Базовый URL MSX (оставляем, так как это для интеграции)
+    MSX_API: 'http://msx.benzac.de/', // Для интеграции с MSX
+    CONTENT: '' // Заглушка для контента
 };
 
-// Логирование (для отладки на ТВ)
-function log(message) {
-  if (console) console.log('[MSX Launcher] ' + message);
-}
-
-// Заглушка для данных фильмов (статические данные вместо API)
-var placeholderMovies = [
-  { title: 'Фильм 1', poster_path: '/placeholder1.jpg', video_url: 'placeholder-video1.mp4' },
-  { title: 'Фильм 2', poster_path: '/placeholder2.jpg', video_url: 'placeholder-video2.mp4' },
-  { title: 'Фильм 3', poster_path: '/placeholder3.jpg', video_url: 'placeholder-video3.mp4' },
-  { title: 'Фильм 4', poster_path: '/placeholder4.jpg', video_url: 'placeholder-video4.mp4' },
-  { title: 'Фильм 5', poster_path: '/placeholder5.jpg', video_url: 'placeholder-video5.mp4' }
+// Заглушка для данных меню
+var placeholderMenu = [
+    {
+        type: 'separate',
+        headline: 'Фильмы (заглушка)',
+        items: [
+            { type: 'item', label: 'Фильм 1', icon: 'placeholder1.jpg', action: 'video:play:placeholder1.mp4' },
+            { type: 'item', label: 'Фильм 2', icon: 'placeholder2.jpg', action: 'video:play:placeholder2.mp4' },
+            { type: 'item', label: 'Фильм 3', icon: 'placeholder3.jpg', action: 'video:play:placeholder3.mp4' }
+        ]
+    },
+    {
+        type: 'separate',
+        headline: 'IPTV (заглушка)',
+        action: 'content:request:m3u:placeholder.m3u'
+    },
+    {
+        type: 'item',
+        label: 'Выход',
+        action: 'back'
+    }
 ];
 
-// Функция для генерации JSON-меню лаунчера с заглушками
-function generateLauncherJSON(movies) {
-  var json = {
-    "type": "menu",
-    "headline": "Мой Лаунчер",
-    "items": [
-      {
-        "type": "separate",
-        "headline": "Популярные фильмы (заглушки)",
-        "items": movies.map(function(movie) {
-          return {
-            "type": "item",
-            "label": movie.title,
-            "icon": CONFIG.IMAGE_PROXY + movie.poster_path, // Заглушка для иконки
-            "action": "video:play:" + movie.video_url // Заглушка для видео
-          };
-        })
-      },
-      {
-        "type": "separate",
-        "headline": "IPTV (заглушка)",
-        "action": "content:request:m3u:" + CONFIG.IPTV_PLAYLIST // Заглушка для M3U
-      },
-      {
-        "type": "item",
-        "label": "Выход",
-        "action": "back"
-      }
-    ]
-  };
-  return json;
+// Функция для генерации JSON-меню
+function generateLauncherJSON() {
+    log('Генерация JSON для MSX...');
+    var json = {
+        type: 'menu',
+        headline: 'Мой Лаунчер',
+        items: placeholderMenu
+    };
+    return json;
 }
 
-// Инициализация с заглушками (без реальных запросов)
+// Отправка JSON в MSX через postMessage
+function sendToMSX(json) {
+    if (!window.parent) {
+        log('Ошибка: window.parent недоступен');
+        return;
+    }
+    try {
+        window.parent.postMessage({
+            type: 'interaction',
+            data: { json: JSON.stringify(json) }
+        }, '*');
+        log('JSON отправлен в MSX');
+    } catch (e) {
+        log('Ошибка postMessage: ' + e.message);
+    }
+}
+
+// Инициализация лаунчера
 function initLauncher() {
-  log('Инициализация лаунчера с заглушками...');
-  // Используем статические заглушки вместо fetch
-  var movies = placeholderMovies;
-  var launcherJSON = generateLauncherJSON(movies);
-  // Отправка JSON в MSX через postMessage (interaction plugin)
-  if (window.parent) {
-    window.parent.postMessage({
-      type: 'interaction',
-      data: { json: JSON.stringify(launcherJSON) }
-    }, '*');
-  }
-  log('Лаунчер с заглушками загружен');
+    log('Инициализация лаунчера...');
+    var json = generateLauncherJSON();
+    sendToMSX(json);
 }
 
-// Запуск при загрузке
+// Запуск
 if (document.addEventListener) {
-  document.addEventListener('DOMContentLoaded', initLauncher);
+    document.addEventListener('DOMContentLoaded', function() {
+        log('DOMContentLoaded сработал');
+        initLauncher();
+    });
 } else {
-  window.onload = initLauncher;
+    window.onload = function() {
+        log('window.onload сработал');
+        initLauncher();
+    };
+}
+
+// Обработка сообщений от MSX (для отладки)
+if (window.addEventListener) {
+    window.addEventListener('message', function(event) {
+        log('Получено сообщение от MSX: ' + JSON.stringify(event.data));
+    }, false);
 }
