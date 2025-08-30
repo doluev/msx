@@ -10,21 +10,21 @@
                   "items": [
                      {
                         "type": "button",
-                        "layout": "0,0,3,3",
+                        "layout": "0,0,1,1",
                         "icon": "web-asset",
                         "label": "GetsTV",
                         "action": "link:http://getstv.com/app/"
                      },
                      {
                         "type": "button",
-                        "layout": "3,0,3,3",
+                        "layout": "1,0,1,1",
                         "icon": "web-asset",
                         "label": "Atodo",
                         "action": "link:http://atodo.fun/"
                      },
                      {
                         "type": "button",
-                        "layout": "0,2,3,3",
+                        "layout": "2,0,1,1",
                         "icon": "web-asset",
                         "label": "Atodo",
                         "action": "menu:request:interaction:menu@http://atodo.fun/fun.html"
