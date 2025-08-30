@@ -14,6 +14,13 @@
                         "icon": "web-asset",
                         "label": "Panel",
                         "action": "link:http://getstv.com/app/"
+                     },
+                     {
+                        "type": "button",
+                        "layout": "3,0,3,3",
+                        "icon": "web-asset",
+                        "label": "Panel",
+                        "action": "link:http://atodo.fun/"
                      }
                   ]
                }
