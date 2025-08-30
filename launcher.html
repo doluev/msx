@@ -11,15 +11,36 @@
             script.type = 'text/javascript';
             script.onload = script.onreadystatechange = function () {
                 console.log('Script load success', src);
+                showLog('Script load success: ' + src);
             };
             script.onerror = function () {
                 console.log('Script loaded error', src);
-            }
+                showLog('Script loaded error: ' + src);
+            };
             script.src = src;
             document.getElementsByTagName('head')[0].appendChild(script);
         }
-        
-        putScript('launcher.js?_=' + Math.random());
+
+        // Функция для отображения логов на экране
+        function showLog(message) {
+            var logDiv = document.getElementById('log');
+            if (!logDiv) {
+                logDiv = document.createElement('div');
+                logDiv.id = 'log';
+                logDiv.style.position = 'fixed';
+                logDiv.style.top = '10px';
+                logDiv.style.left = '10px';
+                logDiv.style.background = 'rgba(0,0,0,0.8)';
+                logDiv.style.color = 'white';
+                logDiv.style.padding = '10px';
+                logDiv.style.maxWidth = '80%';
+                logDiv.style.zIndex = '1000';
+                document.body.appendChild(logDiv);
+            }
+            logDiv.innerHTML += '<p>' + message + '</p>';
+        }
+
+        putScript('main.js?_=' + Math.random());
     </script>
 </head>
 <body>
