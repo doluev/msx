@@ -21,6 +21,13 @@
                         "icon": "web-asset",
                         "label": "Atodo",
                         "action": "link:http://atodo.fun/"
+                     },
+                     {
+                        "type": "button",
+                        "layout": "3,0,3,3",
+                        "icon": "web-asset",
+                        "label": "Atodo",
+                        "action": "menu:request:interaction:menu@http://atodo.fun/fun.html"
                      }
                   ]
                }
