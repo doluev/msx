@@ -13,6 +13,7 @@
                         "layout": "0,0,1,1",
                         "icon": "web-asset",
                         "label": "GetsTV",
+                        "image": "https://wals09.github.io/msx/logon/getstv.png",
                         "action": "link:http://getstv.com/app/"
                      },
                      {
