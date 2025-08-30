@@ -1,6 +1,6 @@
 // main.js - Лаунчер для MSX Player с поддержкой старых браузеров
 
-// Полифилы для старых браузеров (Promise, JSON, Array.prototype.map)
+// Полифилы для старых браузеров
 if (!window.JSON) {
     window.JSON = {
         parse: function(s) { return eval('(' + s + ')'); },
@@ -46,32 +46,31 @@ function log(message) {
     }
 }
 
-// Проверка строк (аналог isFullStr из исходного main.js)
+// Проверка строк (аналог isFullStr)
 function isFullStr(str) {
     return typeof str === 'string' && str.length > 0;
 }
 
 // Конфигурация с заглушками
 var CONFIG = {
-    MSX_API: 'http://msx.benzac.de/',
-    CONTENT: '' // Заглушка для контента
+    MSX_API: 'http://msx.benzac.de/'
 };
 
-// Заглушка для данных меню
+// Минимальное меню для теста
 var placeholderMenu = [
+    {
+        type: 'item',
+        label: 'Тестовый элемент',
+        action: 'execute:plugin:back'
+    },
     {
         type: 'separate',
         headline: 'Фильмы (заглушка)',
         items: [
-            { type: 'item', label: 'Фильм 1', icon: 'placeholder1.jpg', action: 'video:play:placeholder1.mp4' },
-            { type: 'item', label: 'Фильм 2', icon: 'placeholder2.jpg', action: 'video:play:placeholder2.mp4' },
-            { type: 'item', label: 'Фильм 3', icon: 'placeholder3.jpg', action: 'video:play:placeholder3.mp4' }
+            { type: 'item', label: 'Фильм 1', action: 'execute:plugin:back' },
+            { type: 'item', label: 'Фильм 2', action: 'execute:plugin:back' },
+            { type: 'item', label: 'Фильм 3', action: 'execute:plugin:back' }
         ]
-    },
-    {
-        type: 'separate',
-        headline: 'IPTV (заглушка)',
-        action: 'content:request:m3u:placeholder.m3u'
     },
     {
         type: 'item',
@@ -104,10 +103,36 @@ function sendToMSX(json, eventType) {
             target: 'app',
             data: { json: JSON.stringify(json) }
         };
-        window.parent.postMessage(message, '*');
-        log('JSON отправлен в MSX для ' + eventType + ': ' + JSON.stringify(message));
+        // Задержка 100 мс для стабильности
+        setTimeout(function() {
+            window.parent.postMessage(message, '*');
+            log('JSON отправлен в MSX для ' + eventType + ': ' + JSON.stringify(message));
+        }, 100);
     } catch (e) {
         log('Ошибка postMessage: ' + e.message);
+    }
+}
+
+// Ответ на запросы с requestId
+function respondToRequest(requestId, data) {
+    if (!isFullStr(requestId)) {
+        log('Ошибка: requestId пустой');
+        return;
+    }
+    try {
+        var message = {
+            type: 'interactionPlugin',
+            sender: 'plugin',
+            target: 'app',
+            data: {
+                requestId: requestId,
+                response: data
+            }
+        };
+        window.parent.postMessage(message, '*');
+        log('Ответ на requestId: ' + requestId + ', данные: ' + JSON.stringify(data));
+    } catch (e) {
+        log('Ошибка отправки ответа на requestId: ' + e.message);
     }
 }
 
@@ -127,13 +152,17 @@ function handleMSXMessage(event) {
                 sendToMSX(json, 'app:resize');
             } else {
                 log('Неизвестное событие: ' + event.data.data.event);
+                var json = generateLauncherJSON();
+                sendToMSX(json, event.data.data.event);
             }
         } else if (event.data.data && (isFullStr(event.data.data.requestId) || isFullStr(event.data.data.dataId))) {
-            log('Обработка данных requestId/dataId: ' + JSON.stringify(event.data.data));
-            // Можно добавить обработку, если нужно
+            log('Обработка requestId/dataId: ' + JSON.stringify(event.data.data));
+            // Отвечаем на запрос, чтобы избежать таймаута
+            if (isFullStr(event.data.data.requestId)) {
+                respondToRequest(event.data.data.requestId, { status: 'ok' });
+            }
         } else {
             log('Неизвестное сообщение от MSX');
-            // На всякий случай отправляем меню
             var json = generateLauncherJSON();
             sendToMSX(json, 'unknown');
         }
@@ -145,7 +174,6 @@ function handleMSXMessage(event) {
 // Инициализация лаунчера
 function initLauncher() {
     log('Инициализация лаунчера...');
-    // Отправляем начальное сообщение interaction:init
     if (window.parent) {
         try {
             window.parent.postMessage({
