@@ -1,5 +1,38 @@
 <!DOCTYPE html>
-<html>
-<head><script src="launcher.js"></script></head>
-<body></body>
+<html lang="ru">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="referrer" content="no-referrer">
+    <script>
+        function putScript(src) {
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.onload = script.onreadystatechange = function () {
+                console.log('Script load success', src);
+            };
+            script.onerror = function () {
+                console.log('Script loaded error', src);
+            }
+            script.src = src;
+            document.getElementsByTagName('head')[0].appendChild(script);
+        }
+        
+        putScript('main.js?_=' + Math.random());
+    </script>
+</head>
+<body>
+    <div id="backdropGround" class="fullscreen background" style="display:none"></div>
+    <div id="backdropContainer1" class="fullscreen" style="display:none">
+        <div class="content-wrapper">
+            <img id="backdropImage1" class="backdrop-image" crossorigin="anonymous" style="display:none">
+        </div>
+    </div>
+    <div id="backdropContainer2" class="fullscreen" style="display:none">
+        <div class="content-wrapper">
+            <img id="backdropImage2" class="backdrop-image" crossorigin="anonymous" style="display:none">
+        </div>
+    </div>
+</body>
 </html>
