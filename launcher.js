@@ -1,4 +1,4 @@
-// launcher.js - Лаунчер для MSX Player с поддержкой старых браузеров
+// main.js - Лаунчер для MSX Player с поддержкой старых браузеров и заглушками
 
 // Полифилы для старых браузеров (Promise, Fetch)
 if (!window.Promise) {
@@ -31,12 +31,12 @@ if (!window.fetch) {
   };
 }
 
-// Конфигурация
+// Конфигурация с заглушками
 var CONFIG = {
-  TMDB_API: 'https://api.themoviedb.org/3/movie/popular?api_key=YOUR_TMDB_KEY', // Ваш ключ TMDB
-  IMAGE_PROXY: 'https://image.tmdb.org/t/p/w300',
-  IPTV_PLAYLIST: 'http://example.com/playlist.m3u', // Ваш M3U-плейлист
-  MSX_API: 'http://msx.benzac.de/' // Базовый URL MSX
+  TMDB_API: '', // Заглушка: не использовать реальный API
+  IMAGE_PROXY: '', // Заглушка для изображений
+  IPTV_PLAYLIST: '', // Заглушка для плейлиста
+  MSX_API: 'http://msx.benzac.de/' // Базовый URL MSX (оставляем, так как это для интеграции)
 };
 
 // Логирование (для отладки на ТВ)
@@ -44,7 +44,16 @@ function log(message) {
   if (console) console.log('[MSX Launcher] ' + message);
 }
 
-// Функция для генерации JSON-меню лаунчера
+// Заглушка для данных фильмов (статические данные вместо API)
+var placeholderMovies = [
+  { title: 'Фильм 1', poster_path: '/placeholder1.jpg', video_url: 'placeholder-video1.mp4' },
+  { title: 'Фильм 2', poster_path: '/placeholder2.jpg', video_url: 'placeholder-video2.mp4' },
+  { title: 'Фильм 3', poster_path: '/placeholder3.jpg', video_url: 'placeholder-video3.mp4' },
+  { title: 'Фильм 4', poster_path: '/placeholder4.jpg', video_url: 'placeholder-video4.mp4' },
+  { title: 'Фильм 5', poster_path: '/placeholder5.jpg', video_url: 'placeholder-video5.mp4' }
+];
+
+// Функция для генерации JSON-меню лаунчера с заглушками
 function generateLauncherJSON(movies) {
   var json = {
     "type": "menu",
@@ -52,20 +61,20 @@ function generateLauncherJSON(movies) {
     "items": [
       {
         "type": "separate",
-        "headline": "Популярные фильмы",
+        "headline": "Популярные фильмы (заглушки)",
         "items": movies.map(function(movie) {
           return {
             "type": "item",
             "label": movie.title,
-            "icon": CONFIG.IMAGE_PROXY + movie.poster_path,
-            "action": "video:play:" + movie.video_url // Замените на реальный URL видео
+            "icon": CONFIG.IMAGE_PROXY + movie.poster_path, // Заглушка для иконки
+            "action": "video:play:" + movie.video_url // Заглушка для видео
           };
         })
       },
       {
         "type": "separate",
-        "headline": "IPTV",
-        "action": "content:request:m3u:" + CONFIG.IPTV_PLAYLIST // Запуск M3U в MSX
+        "headline": "IPTV (заглушка)",
+        "action": "content:request:m3u:" + CONFIG.IPTV_PLAYLIST // Заглушка для M3U
       },
       {
         "type": "item",
@@ -77,26 +86,20 @@ function generateLauncherJSON(movies) {
   return json;
 }
 
-// Загрузка данных и инициализация
+// Инициализация с заглушками (без реальных запросов)
 function initLauncher() {
-  log('Инициализация лаунчера...');
-  fetch(CONFIG.TMDB_API)
-    .then(function(response) { return response.json(); })
-    .then(function(data) {
-      var movies = data.results.slice(0, 5); // Топ-5 фильмов
-      var launcherJSON = generateLauncherJSON(movies);
-      // Отправка JSON в MSX через postMessage (interaction plugin)
-      if (window.parent) {
-        window.parent.postMessage({
-          type: 'interaction',
-          data: { json: JSON.stringify(launcherJSON) }
-        }, '*');
-      }
-      log('Лаунчер загружен');
-    })
-    .catch(function(err) {
-      log('Ошибка: ' + err.message);
-    });
+  log('Инициализация лаунчера с заглушками...');
+  // Используем статические заглушки вместо fetch
+  var movies = placeholderMovies;
+  var launcherJSON = generateLauncherJSON(movies);
+  // Отправка JSON в MSX через postMessage (interaction plugin)
+  if (window.parent) {
+    window.parent.postMessage({
+      type: 'interaction',
+      data: { json: JSON.stringify(launcherJSON) }
+    }, '*');
+  }
+  log('Лаунчер с заглушками загружен');
 }
 
 // Запуск при загрузке
