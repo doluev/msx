@@ -104,6 +104,7 @@
 
       },
       {   
+         "icon": "text-format",
          "label": "Atodo",
          "data": {
             "type": "pages",
