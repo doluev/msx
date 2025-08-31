@@ -104,8 +104,8 @@
 
       },
       {   
-         "icon": "text-format",
-         "label": "Atodo",
+         "icon": "video-collection",
+         "label": "Киновод",
          "data": {
             "type": "pages",
             "pages": [
