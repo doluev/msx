@@ -1,6 +1,6 @@
 {
   "name": "Мой MSX",
   "version": "1.0.0",
-  "parameter": "menu:http://doluev.github.io/msx/menu.json",
+  "parameter": "menu:request:interaction:init@http://doluev.github.io/msx/launcher.html",
   "welcome": "start"
 }
