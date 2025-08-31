@@ -137,7 +137,7 @@
                {"items":  [
                    {
                     "type": "default",
-                    "layout": "0,3,4,4",
+                    "layout": "0,2,4,4",
                     "color": "msx-black",
                     "titleFooter": "width-top",
                     "imageFiller": "width-top",
