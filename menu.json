@@ -142,6 +142,15 @@
          "type": "separator"
 
       },
+      {
+
+         "icon": "video-collection",
+
+         "label": "Киновод",
+
+         "action": "content:request:interaction:{URL}@http://msx.benzac.de/interaction/input.html"
+
+      },
 
       {
 
