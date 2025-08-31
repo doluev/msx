@@ -116,7 +116,7 @@
                         "layout": "0,0,3,3",
                         "icon": "video-collection",
                         "label": "Киновод",
-                        "action": "content:request:interaction:http://10.8.0.180:5000/input?input={INPUT}&type=default|search|ru|Поиск по киноводу|||Click on {ico:msx-white:done} to submit input@http://msx.benzac.de/interaction/input.html"
+                        "action": "content:request:interaction:https://search-zlbh.onrender.com/input?input={INPUT}&type=default|search|ru|Поиск по киноводу|||Click on {ico:msx-white:done} to submit input@http://msx.benzac.de/interaction/input.html"
                      }
                   ]
                }
