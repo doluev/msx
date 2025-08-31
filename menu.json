@@ -139,6 +139,7 @@
                     "type": "default",
                     "layout": "0,3,4,4",
                     "color": "msx-black",
+                    "imageFiller": "width-top",
                     "image": "https://doluev.github.io/msx/qrCode.png"
                    }
                ]
