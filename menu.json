@@ -141,6 +141,7 @@
                     "color": "msx-black",
                     "imageFiller": "width-top",
                     "image": "https://doluev.github.io/msx/qrCode.png"
+                    "action": "info:Автору на печеньки и развитие проекта"
                    }
                ]
                }
