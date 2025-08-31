@@ -137,10 +137,11 @@
                {"items":  [
                    {
                     "type": "default",
-                    "layout": "0,3,4,4",
+                    "layout": "0,0,4,2",
                     "color": "msx-black",
+                    "titleFooter": "width-top",
                     "imageFiller": "width-top",
-                    "image": "https://doluev.github.io/msx/qrCode.png"
+                    "image": "http://msx.benzac.de/img/test.jpg"
                    }
                ]
                }
