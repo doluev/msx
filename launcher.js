@@ -82,6 +82,17 @@ function generateLauncherJSON() {
     };
 }
 
+// Ответные данные для requestId
+function getResponseData(requestId) {
+    if (requestId.includes('menu')) {
+        return generateLauncherJSON();
+    }
+    if (requestId.includes('http://atodo.fun/fun.html')) {
+        return { type: 'page', headline: 'Поиск', items: [] };
+    }
+    return { status: 'ok' };
+}
+
 // Отправка JSON в MSX
 function sendToMSX(json, eventType) {
     if (!window.parent) {
@@ -117,7 +128,7 @@ function respondToRequest(requestId, data) {
             target: 'app',
             data: {
                 requestId: requestId,
-                response: data || { status: 'ok' }
+                response: data
             }
         };
         window.parent.postMessage(message, '*');
@@ -149,10 +160,7 @@ function handleMSXMessage(event) {
         } else if (event.data.data && (isFullStr(event.data.data.requestId) || isFullStr(event.data.data.dataId))) {
             log('Обработка requestId/dataId: ' + JSON.stringify(event.data.data));
             if (isFullStr(event.data.data.requestId)) {
-                var responseData = { status: 'ok' };
-                if (event.data.data.requestId.includes('menu')) {
-                    responseData = generateLauncherJSON();
-                }
+                var responseData = getResponseData(event.data.data.requestId);
                 respondToRequest(event.data.data.requestId, responseData);
             }
             if (isFullStr(event.data.data.dataId)) {
