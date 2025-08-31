@@ -1,6 +1,6 @@
 {
   "name": "Мой MSX",
   "version": "1.0.0",
-  "parameter": "menu:http://doluev.github.io/msx/menu.json",
+  "parameter": "menu:https://doluev.github.io/msx/menu.json",
   "welcome": "start"
 }
