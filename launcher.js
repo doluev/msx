@@ -1,4 +1,4 @@
-// main.js - Лаунчер для MSX Player (только пункт "Поиск")
+// main.js - Лаунчер для MSX Player с одним пунктом меню "Поиск"
 
 // Полифилы для старых браузеров
 if (!window.JSON) {
@@ -46,45 +46,40 @@ function log(message) {
     }
 }
 
+// Проверка строк
 function isFullStr(str) {
     return typeof str === 'string' && str.length > 0;
 }
 
 // Конфигурация
 var CONFIG = {
+    MSX_API: 'http://msx.benzac.de/',
     DICTIONARY: 'https://wals09.github.io/msx/dictionary.json',
     LOGO: 'https://doluev.github.io/msx/logo_color.png'
 };
 
-// Генерация JSON (только пункт "Поиск")
+// JSON-меню с одним пунктом "Поиск"
 function generateLauncherJSON() {
     log('Генерация JSON для MSX...');
     return {
-        extension: '{col:msx-white}{ico:msx-white:search} {txt:Поиск}',
+        extension: '{col:msx-white}{ico:msx-white:event} {now:date:D, M d, yyyy}{tb}{ico:msx-white:access-time} {now:time:hh:mm}',
         dictionary: CONFIG.DICTIONARY,
         logo: CONFIG.LOGO,
-        headline: 'MSX Поиск',
+        headline: '',
         menu: [
+            {
+                type: 'separator'
+            },
             {
                 icon: 'search',
                 label: 'Поиск',
-                data: {
-                    type: 'search',
-                    headline: 'Поиск фильмов и сериалов',
-                    url: 'https://kinovod.tv/search?query={query}',
-                    mode: 'open'
-                }
+                action: 'menu:request:interaction:menu@http://atodo.fun/fun.html'
+            },
+            {
+                type: 'separator'
             }
         ]
     };
-}
-
-// Ответные данные
-function getResponseData(requestId) {
-    if (requestId.includes('menu')) {
-        return generateLauncherJSON();
-    }
-    return { status: 'ok' };
 }
 
 // Отправка JSON в MSX
@@ -122,7 +117,7 @@ function respondToRequest(requestId, data) {
             target: 'app',
             data: {
                 requestId: requestId,
-                response: data
+                response: data || { status: 'ok' }
             }
         };
         window.parent.postMessage(message, '*');
@@ -132,24 +127,48 @@ function respondToRequest(requestId, data) {
     }
 }
 
-// Обработка сообщений
+// Обработка сообщений от MSX
 function handleMSXMessage(event) {
-    log('Получено сообщение: ' + JSON.stringify(event.data));
+    log('Получено сообщение от MSX: ' + JSON.stringify(event.data));
     if (event.data && event.data.type === 'interactionPlugin') {
         if (event.data.init === 1) {
+            log('Обработка init:1 сообщения');
             var json = generateLauncherJSON();
             sendToMSX(json, 'init:1');
         } else if (event.data.data && isFullStr(event.data.data.event)) {
+            log('Обработка события: ' + event.data.data.event);
+            if (event.data.data.event === 'app:resize') {
+                log('Обработка app:resize');
+                var json = generateLauncherJSON();
+                sendToMSX(json, 'app:resize');
+            } else {
+                log('Неизвестное событие: ' + event.data.data.event);
+                var json = generateLauncherJSON();
+                sendToMSX(json, event.data.data.event);
+            }
+        } else if (event.data.data && (isFullStr(event.data.data.requestId) || isFullStr(event.data.data.dataId))) {
+            log('Обработка requestId/dataId: ' + JSON.stringify(event.data.data));
+            if (isFullStr(event.data.data.requestId)) {
+                var responseData = { status: 'ok' };
+                if (event.data.data.requestId.includes('menu')) {
+                    responseData = generateLauncherJSON();
+                }
+                respondToRequest(event.data.data.requestId, responseData);
+            }
+            if (isFullStr(event.data.data.dataId)) {
+                respondToRequest(event.data.data.dataId, { status: 'ok' });
+            }
+        } else {
+            log('Неизвестное сообщение от MSX');
             var json = generateLauncherJSON();
-            sendToMSX(json, event.data.data.event);
-        } else if (event.data.data && isFullStr(event.data.data.requestId)) {
-            var responseData = getResponseData(event.data.data.requestId);
-            respondToRequest(event.data.data.requestId, responseData);
+            sendToMSX(json, 'unknown');
         }
+    } else {
+        log('Игнорируем сообщение с типом: ' + (event.data ? event.data.type : 'undefined'));
     }
 }
 
-// Инициализация
+// Инициализация лаунчера
 function initLauncher() {
     log('Инициализация лаунчера...');
     if (window.parent) {
@@ -162,7 +181,7 @@ function initLauncher() {
             }, '*');
             log('Отправлено interaction:init');
         } catch (e) {
-            log('Ошибка interaction:init: ' + e.message);
+            log('Ошибка отправки interaction:init: ' + e.message);
         }
     }
 }
@@ -170,10 +189,14 @@ function initLauncher() {
 // Запуск
 if (document.addEventListener) {
     document.addEventListener('DOMContentLoaded', function() {
+        log('DOMContentLoaded сработал');
         initLauncher();
     });
     window.addEventListener('message', handleMSXMessage, false);
 } else {
-    window.onload = initLauncher;
+    window.onload = function() {
+        log('window.onload сработал');
+        initLauncher();
+    };
     window.onmessage = handleMSXMessage;
 }
