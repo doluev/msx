@@ -131,6 +131,13 @@
                         "icon": "https://wals09.github.io/msx/logon/atodo.png",
                         "label": "Atodo Search",
                         "action": "page:request:interaction:search@http://atodo.fun/fun.html"
+                     },
+                     {
+                        "type": "button",
+                        "layout": "3,3,3,3",
+                        "icon": "keyboard",
+                        "label": "Клавиатура",
+                        "action": "content:request:interaction:http://msx.benzac.de/services/input.php?input={INPUT}&type=default|default|en|Default Input Example|||Click on {ico:msx-white:done} to submit input@http://msx.benzac.de/interaction/input.html"
                      }
                   ]
                }
