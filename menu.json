@@ -114,29 +114,8 @@
                      {
                         "type": "button",
                         "layout": "0,0,3,3",
-                        "icon": "https://wals09.github.io/msx/logon/atodo.png",
-                        "label": "Atodo",
-                        "action": "menu:request:interaction:menu@http://atodo.fun/fun.html"
-                     },
-                     {
-                        "type": "button",
-                        "layout": "3,0,3,3",
-                        "icon": "https://wals09.github.io/msx/logon/atodo.png",
-                        "label": "Atodo",
-                        "action": "link:http://atodo.fun"
-                     },
-                     {
-                        "type": "button",
-                        "layout": "0,3,3,3",
-                        "icon": "https://wals09.github.io/msx/logon/atodo.png",
-                        "label": "Atodo Search",
-                        "action": "page:request:interaction:search@http://atodo.fun/fun.html"
-                     },
-                     {
-                        "type": "button",
-                        "layout": "3,3,3,3",
-                        "icon": "keyboard",
-                        "label": "Клавиатура",
+                        "icon": "video-collection",
+                        "label": "Киновод",
                         "action": "content:request:interaction:http://msx.benzac.de/services/input.php?input={INPUT}&type=default|default|en|Default Input Example|||Click on {ico:msx-white:done} to submit input@http://msx.benzac.de/interaction/input.html"
                      }
                   ]
